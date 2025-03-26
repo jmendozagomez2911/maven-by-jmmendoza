@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- groupId: identifica al autor o grupo. Puede ser como un dominio invertido -->
+    <groupId>io.github.josemanuel</groupId>
+    <!-- artifactId: nombre del proyecto, será el nombre del .jar generado -->
+    <artifactId>maven-by-jmendoza</artifactId>
+    <!-- versión del proyecto -->
+    <version>1.0-SNAPSHOT</version>
+
+    <!-- nombre descriptivo (opcional pero recomendable) -->
+    <name>Maven Tutorial by Jose Manuel</name>
+
+    <!-- desarrollador (opcional pero profesional) -->
+    <developers>
+        <developer>
+            <id>jmmendoza2911</id>
+            <name>Jose Manuel</name>
+            <email>jmmendoza2911@outlook.com</email>
+        </developer>
+    </developers>
+
+
+    <properties>
+        <!-- Establece la codificación de los archivos fuente del proyecto (UTF-8) -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Establece la codificación de salida de los informes generados (UTF-8) -->
+        <project.reporting.OutputEncoding>UTF-8</project.reporting.OutputEncoding>
+        <!-- Define la versión de Java que se usará en el proyecto -->
+        <java.version>11</java.version>
+        <!--
+            Establece la versión de Java que se usará para compilar el código fuente.
+            Esta propiedad define qué características del lenguaje Java están permitidas durante la compilación del código fuente (.java).
+            Por ejemplo, si se usa Java 11, podrás usar características de esa versión como 'var' para inferencia de tipos o nuevas APIs.
+            El compilador de Maven procesará el código fuente teniendo en cuenta esta versión,
+            permitiendo que se utilicen características correspondientes a esa versión de Java.
+            El resultado de la compilación será un archivo .class, que es el bytecode correspondiente al código fuente.
+        -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+
+        <!--
+            Establece la versión de Java para la que se generará el bytecode (archivos .class) durante la compilación.
+            Esta propiedad indica la versión de la JVM con la que el bytecode resultante será compatible.
+            Aunque el código fuente puede usar características más nuevas (por ejemplo, Java 11), el bytecode generado
+            será compatible con la versión de JVM especificada en 'maven.compiler.target'.
+            Por ejemplo, si se establece en 1.8, el bytecode se generará de forma que sea ejecutable en una JVM de Java 8,
+            incluso si el código fuente usa características de una versión más reciente de Java.
+        -->
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+    </properties>
+
+</project>
