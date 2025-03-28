@@ -8,7 +8,36 @@
     <groupId>io.github.josemanuel</groupId>
     <!-- artifactId: nombre del proyecto, será el nombre del .jar generado -->
     <artifactId>maven-by-jmendoza</artifactId>
-    <!-- versión del proyecto -->
+    <!--
+        Versión del proyecto.
+
+        El sufijo "-SNAPSHOT" indica que esta es una versión **en desarrollo** del artefacto. Esto significa que
+        el código y el artefacto pueden cambiar en cualquier momento, y la versión del proyecto no es estable.
+        Maven gestiona estas versiones como artefactos que están **en constante cambio** durante el ciclo de desarrollo.
+
+        ### Pasos del proceso:
+        1. **Desarrollo inicial**:
+           - Cuando comienzas a desarrollar el proyecto, la versión se define como `1.0-SNAPSHOT` (o cualquier número de versión que elijas).
+           - Maven tratará esta versión como una **versión en desarrollo**. Esto permite que el artefacto se construya varias veces, con la posibilidad de actualizarse con cada **nuevo build**.
+
+        2. **Creación y publicación de versiones `SNAPSHOT`**:
+           - Cada vez que haces un **build** (ej. `mvn clean install` o `mvn deploy`), Maven genera un nuevo artefacto con el sufijo `-SNAPSHOT` (por ejemplo, `1.0-20230327.121212-1`), que es una **nueva versión en desarrollo**.
+           - **El artefacto generado** se sube al repositorio remoto (por ejemplo, Nexus o Artifactory) si el proceso de CI/CD está configurado para hacerlo, permitiendo que otras dependencias o proyectos usen esa versión más reciente.
+
+        3. **Actualización continua**:
+           - Como los artefactos `SNAPSHOT` pueden cambiar frecuentemente, Maven descargará siempre la **última versión `SNAPSHOT` disponible** en el repositorio remoto cuando otro proyecto dependa de él.
+           - Esto garantiza que el proyecto siempre esté usando la **versión más actual** del artefacto `SNAPSHOT` sin necesidad de cambiar manualmente la versión en los archivos `pom.xml` de los proyectos que dependen de este artefacto.
+
+        4. **Release de la versión estable**:
+           - Una vez que el proyecto está **completo** y listo para producción, se marca **como `isRelease`** (por ejemplo, `1.0.0`).
+           - Esto significa que el artefacto **final** ya no será modificado y no se generarán nuevas versiones `SNAPSHOT`.
+           - A partir de ese momento, el artefacto se considera una **versión estable** que no cambiará automáticamente, a diferencia de las versiones `SNAPSHOT`.
+
+        ### Resumen:
+        - **Versión `SNAPSHOT`**: Se utiliza mientras el proyecto está en desarrollo. Puede ser sobrescrita con cada build.
+        - **Versión final (Release)**: Se marca cuando el proyecto está listo para producción, indicando que la versión no cambiará y es estable.
+        - **Subida al repositorio remoto**: Cuando se realiza un build con una versión `SNAPSHOT`, el artefacto se sube al repositorio (si está configurado), permitiendo que otros proyectos lo utilicen.
+    -->
     <version>1.0-SNAPSHOT</version>
 
     <!-- nombre descriptivo (opcional pero recomendable) -->
@@ -51,5 +80,13 @@
         -->
         <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+    </dependencies>
 
 </project>
