@@ -1,9 +1,18 @@
 # Maven Build Lifecycles
 
-Maven is based on the concept of **build lifecycles**. A lifecycle is a predefined group of **phases** that define the steps Maven will follow during the build process. Each phase in the lifecycle can be bound to one or more **plugin goals**.
+Maven is based on the concept of **build lifecycles**. A lifecycle is a predefined group of **phases** that define the steps Maven will follow during the build process. Each phase in the lifecycle can be bound to one or more **plugin goals** — that is, tasks performed by specific plugins.
+
+### 🧪 Example
+For instance, the `package` phase is typically bound to:
+- `maven-jar-plugin:jar` → to create a JAR file
+
+But you can also bind other goals to the same phase, like:
+- `maven-shade-plugin:shade` → to create an uber-jar
+- `exec-maven-plugin:exec` → to run a custom command
+
+So, one phase like `package` can execute **multiple plugin goals**, depending on your project configuration.
 
 ---
-
 ## Maven Predefined Lifecycles
 
 Maven provides three **predefined lifecycles**:
@@ -90,9 +99,20 @@ For **JAR packaging**, the following phases are executed in sequence:
 
 ## How Maven Executes Lifecycles, Phases, and Goals
 
-Maven runs the phases in sequence, following the order of the predefined **lifecycles**. When you run a Maven command (e.g., `mvn clean install`), Maven will execute the corresponding phases and plugin goals:
+Maven runs the phases in sequence, following the order of the predefined **lifecycles**. When you run a Maven command (e.g., `mvn clean install`), Maven will:
 
 1. Start with the **first phase** of the lifecycle.
-2. Execute all associated **plugin goals** for that phase.
-3. Move to the next phase, executing all associated goals.
-4. Continue until all phases are completed.
+2. At each phase, execute all **plugin goals** bound to that specific phase.
+3. Move to the next phase and repeat.
+4. Continue until all phases **up to and including** the one you specified are completed.
+
+> 💡 When you run a phase, you're not just running the plugins attached to that one phase — you're running all the plugin goals bound to **every previous phase** in the lifecycle up to that point.
+
+### 📌 For example:
+
+- `mvn test` will run: `validate` → `compile` → `test`
+- `mvn install` will run everything up to: `install`
+- `mvn deploy` will run the **entire lifecycle**
+
+> 💡 The **lifecycle** defines the **order of actions**, and **plugins** are the **tools Maven uses** at each step.
+
