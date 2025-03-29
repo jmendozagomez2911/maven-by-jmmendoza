@@ -142,13 +142,64 @@
                             Here we define Ant tasks, such as printing a message.
                         -->
                         <configuration>
-                            <tasks>
+                            <target>
                                 <!-- Ant task: prints a message to the console during the 'compile' phase -->
                                 <echo message="🛠️ Hello Jose Manuel! This message runs during the compile phase." />
-                            </tasks>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <!-- Official Maven plugin used to create JAR files during the 'package' phase -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!--
+                                Adds a 'Class-Path' entry to the MANIFEST.MF file inside the generated JAR.
+
+                                This entry lists the names of external JAR files that your application depends on at runtime.
+                                It tells the JVM where to look for those libraries when executing your JAR — assuming they are located
+                                in the same directory or a specified relative path (e.g., 'lib/').
+
+                                Note: Maven does not copy these dependencies automatically. You must place them manually
+                                or use another plugin like 'maven-dependency-plugin' or 'maven-assembly-plugin'.
+
+                                Example of generated entry:
+                                Class-Path: lib/library1.jar lib/library2.jar
+
+                                ❗ If you do NOT declare <addClasspath>true</addClasspath>,
+                                the 'Class-Path' entry will not be included in the manifest.
+                                As a result, when you run your JAR, the JVM will not know where to find external dependencies,
+                                and you'll get ClassNotFoundException errors unless you manually specify the classpath at runtime.
+                            -->
+                            <addClasspath>true</addClasspath>
+
+                            <!--
+                                Specifies the entry point of the application (i.e., the class with the 'main' method).
+
+                                This will generate a 'Main-Class' entry in the MANIFEST.MF file:
+                                Main-Class: HelloWorld
+
+                                It allows the JAR to be executed directly with:
+                                java -jar your-artifact-name.jar
+
+
+                                ❗ If you do NOT declare <mainClass>, Maven will not include a 'Main-Class' entry in the manifest.
+                                As a result, running the JAR with 'java -jar' will fail with an error like:
+                                "no main manifest attribute, in your-artifact-name.jar"
+
+                                In that case, you would need to run the program using the full classpath and main class manually:
+                                java -cp your-artifact-name.jar HelloWorld
+                            -->
+                            <mainClass>Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
