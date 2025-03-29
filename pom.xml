@@ -4,17 +4,46 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- groupId: identifica al autor o grupo. Puede ser como un dominio invertido -->
+    <!-- groupId: identifies the author or organization. It’s usually structured as a reversed domain name -->
     <groupId>io.github.josemanuel</groupId>
-    <!-- artifactId: nombre del proyecto, será el nombre del .jar generado -->
+    <!-- artifactId: project name, it will be the name of the generated .jar file -->
     <artifactId>maven-by-jmendoza</artifactId>
-    <!-- versión del proyecto -->
+    <!--
+        Project version.
+
+        The "-SNAPSHOT" suffix indicates this is a **development** version of the artifact. This means
+        the code and the artifact may change at any time, and the version is not stable.
+        Maven treats these versions as artifacts that are **continuously evolving** during the development cycle.
+
+        ### Process stages:
+        1. **Initial development**:
+           - When starting the project, the version is set to `1.0-SNAPSHOT` (or any version number you choose).
+           - Maven handles this as a **development version**, allowing the artifact to be built multiple times and updated with each **new build**.
+
+        2. **Creating and publishing `SNAPSHOT` versions**:
+           - Every time you run a **build** (e.g. `mvn clean install` or `mvn deploy`), Maven generates a new artifact with a `-SNAPSHOT` suffix (e.g., `1.0-20230327.121212-1`), representing a **new development version**.
+           - **The generated artifact** is uploaded to the remote repository (like Nexus or Artifactory) if CI/CD is set up to do so, allowing other dependencies or projects to use the latest version.
+
+        3. **Continuous updates**:
+           - Since `SNAPSHOT` artifacts change frequently, Maven will always download the **latest available SNAPSHOT version** from the remote repository when another project depends on it.
+           - This ensures that the project always uses the **most up-to-date** version of the `SNAPSHOT` artifact without manually updating the version.
+
+        4. **Releasing a stable version**:
+           - Once the project is **finished** and ready for production, it is marked as **release** (e.g., `1.0.0`).
+           - This means the **final** artifact won’t be modified and no new `SNAPSHOT` versions will be generated.
+           - From that moment on, the artifact is considered a **stable version** and will not change automatically, unlike `SNAPSHOT` versions.
+
+        ### Summary:
+        - **SNAPSHOT version**: Used during development. It can be overwritten with each build.
+        - **Release version**: Defined when the project is production-ready. It is stable and doesn't change.
+        - **Remote repository upload**: When building with a `SNAPSHOT` version, the artifact is uploaded (if configured), making it available to other projects.
+    -->
     <version>1.0-SNAPSHOT</version>
 
-    <!-- nombre descriptivo (opcional pero recomendable) -->
+    <!-- Descriptive name (optional but recommended) -->
     <name>Maven Tutorial by Jose Manuel</name>
 
-    <!-- desarrollador (opcional pero profesional) -->
+    <!-- Developer information (optional but professional) -->
     <developers>
         <developer>
             <id>jmmendoza2911</id>
@@ -23,33 +52,156 @@
         </developer>
     </developers>
 
-
     <properties>
-        <!-- Establece la codificación de los archivos fuente del proyecto (UTF-8) -->
+        <!-- Sets the encoding for project source files (UTF-8) -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Establece la codificación de salida de los informes generados (UTF-8) -->
+        <!-- Sets the encoding for generated reports (UTF-8) -->
         <project.reporting.OutputEncoding>UTF-8</project.reporting.OutputEncoding>
-        <!-- Define la versión de Java que se usará en el proyecto -->
+        <!-- Defines the Java version used in the project -->
         <java.version>11</java.version>
         <!--
-            Establece la versión de Java que se usará para compilar el código fuente.
-            Esta propiedad define qué características del lenguaje Java están permitidas durante la compilación del código fuente (.java).
-            Por ejemplo, si se usa Java 11, podrás usar características de esa versión como 'var' para inferencia de tipos o nuevas APIs.
-            El compilador de Maven procesará el código fuente teniendo en cuenta esta versión,
-            permitiendo que se utilicen características correspondientes a esa versión de Java.
-            El resultado de la compilación será un archivo .class, que es el bytecode correspondiente al código fuente.
+            Specifies the Java version used to compile source code.
+            This property defines which Java language features are allowed during the compilation of source files (.java).
+            For example, if Java 11 is used, you can use features like 'var' for type inference or new APIs.
+            The Maven compiler processes source code according to this version and generates .class files accordingly.
         -->
         <maven.compiler.source>${java.version}</maven.compiler.source>
 
         <!--
-            Establece la versión de Java para la que se generará el bytecode (archivos .class) durante la compilación.
-            Esta propiedad indica la versión de la JVM con la que el bytecode resultante será compatible.
-            Aunque el código fuente puede usar características más nuevas (por ejemplo, Java 11), el bytecode generado
-            será compatible con la versión de JVM especificada en 'maven.compiler.target'.
-            Por ejemplo, si se establece en 1.8, el bytecode se generará de forma que sea ejecutable en una JVM de Java 8,
-            incluso si el código fuente usa características de una versión más reciente de Java.
+            Specifies the Java version for which the bytecode (.class files) will be generated.
+            This property defines which JVM version the resulting bytecode will be compatible with.
+            Even if you use newer language features (e.g., Java 11), the generated bytecode will
+            be compatible with the JVM version specified in 'maven.compiler.target'.
+            For example, if it's set to 1.8, the bytecode will run on a Java 8 JVM,
+            even if the source code uses newer syntax.
         -->
         <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+    </dependencies>
+
+    <!--
+        The <build> section defines how the project is built.
+
+        This is where you specify plugins that add additional behaviors to the build process,
+        such as compiling, testing, packaging, copying files, running scripts, etc.
+    -->
+    <build>
+        <plugins>
+            <!--
+                Plugin: maven-antrun-plugin
+
+                This plugin allows you to run Ant tasks within the Maven lifecycle.
+                Ant is another build tool (more flexible but less structured than Maven),
+                and this plugin lets you integrate Ant functionality into Maven.
+
+                It's commonly used for custom tasks like printing messages, copying/deleting files,
+                modifying content, generating auxiliary files, etc.
+            -->
+            <plugin>
+                <!-- Standard group for official Maven plugins -->
+                <groupId>org.apache.maven.plugins</groupId>
+
+                <!-- Plugin name -->
+                <artifactId>maven-antrun-plugin</artifactId>
+
+                <!-- Plugin version -->
+                <version>1.8</version>
+
+                <!--
+                    <executions> defines one or more specific executions of the plugin.
+                    Each execution can be bound to a different phase and have its own configuration.
+                -->
+                <executions>
+                    <execution>
+                        <!-- Unique ID for this execution -->
+                        <id>mensaje-en-compile</id>
+
+                        <!--
+                            Phase of the build lifecycle when this execution runs.
+                            In this case: "compile", which is when Maven compiles the source code.
+                        -->
+                        <phase>compile</phase>
+
+                        <!--
+                            List of goals from the plugin to be executed.
+                            The 'run' goal allows running a series of tasks defined under <tasks>.
+                        -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+
+                        <!--
+                            Configuration specific to the 'run' goal.
+                            Here we define Ant tasks, such as printing a message.
+                        -->
+                        <configuration>
+                            <target>
+                                <!-- Ant task: prints a message to the console during the 'compile' phase -->
+                                <echo message="🛠️ Hello Jose Manuel! This message runs during the compile phase." />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <!-- Official Maven plugin used to create JAR files during the 'package' phase -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!--
+                                Adds a 'Class-Path' entry to the MANIFEST.MF file inside the generated JAR.
+
+                                This entry lists the names of external JAR files that your application depends on at runtime.
+                                It tells the JVM where to look for those libraries when executing your JAR — assuming they are located
+                                in the same directory or a specified relative path (e.g., 'lib/').
+
+                                Note: Maven does not copy these dependencies automatically. You must place them manually
+                                or use another plugin like 'maven-dependency-plugin' or 'maven-assembly-plugin'.
+
+                                Example of generated entry:
+                                Class-Path: lib/library1.jar lib/library2.jar
+
+                                ❗ If you do NOT declare <addClasspath>true</addClasspath>,
+                                the 'Class-Path' entry will not be included in the manifest.
+                                As a result, when you run your JAR, the JVM will not know where to find external dependencies,
+                                and you'll get ClassNotFoundException errors unless you manually specify the classpath at runtime.
+                            -->
+                            <addClasspath>true</addClasspath>
+
+                            <!--
+                                Specifies the entry point of the application (i.e., the class with the 'main' method).
+
+                                This will generate a 'Main-Class' entry in the MANIFEST.MF file:
+                                Main-Class: HelloWorld
+
+                                It allows the JAR to be executed directly with:
+                                java -jar your-artifact-name.jar
+
+
+                                ❗ If you do NOT declare <mainClass>, Maven will not include a 'Main-Class' entry in the manifest.
+                                As a result, running the JAR with 'java -jar' will fail with an error like:
+                                "no main manifest attribute, in your-artifact-name.jar"
+
+                                In that case, you would need to run the program using the full classpath and main class manually:
+                                java -cp your-artifact-name.jar HelloWorld
+                            -->
+                            <mainClass>Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
