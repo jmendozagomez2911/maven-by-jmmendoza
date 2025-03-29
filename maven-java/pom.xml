@@ -14,10 +14,8 @@
     <!-- artifactId: project name, it will be the name of the generated .jar file -->
     <artifactId>maven-java</artifactId>
     <packaging>jar</packaging>
-
     <!-- Descriptive name (optional but recommended) -->
-    <name>Maven Java Module</name>
-
+    <name>Maven-Java</name>
 
     <dependencies>
         <dependency>
