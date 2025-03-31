@@ -6,8 +6,10 @@
 
     <!-- groupId: identifies the author or organization. It’s usually structured as a reversed domain name -->
     <groupId>io.github.josemanuel</groupId>
-    <!-- artifactId: project name, it will be the name of the generated .jar file -->
+
+    <!-- artifactId: project name -->
     <artifactId>maven-by-jmendoza</artifactId>
+
     <!--
         Project version.
 
@@ -40,6 +42,9 @@
     -->
     <version>1.0-SNAPSHOT</version>
 
+    <!-- This is a parent aggregator project -->
+    <packaging>pom</packaging>
+
     <!-- Descriptive name (optional but recommended) -->
     <name>Maven Tutorial by Jose Manuel</name>
 
@@ -51,6 +56,12 @@
             <email>jmmendoza2911@outlook.com</email>
         </developer>
     </developers>
+
+    <!-- List of submodules managed by this parent -->
+    <modules>
+        <module>maven-java</module>
+        <module>maven-scala</module>
+    </modules>
 
     <properties>
         <!-- Sets the encoding for project source files (UTF-8) -->
@@ -78,128 +89,32 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
-        </dependency>
-    </dependencies>
-
-    <!--
-        The <build> section defines how the project is built.
-
-        This is where you specify plugins that add additional behaviors to the build process,
-        such as compiling, testing, packaging, copying files, running scripts, etc.
-    -->
     <build>
         <plugins>
-            <!--
-                Plugin: maven-antrun-plugin
-
-                This plugin allows you to run Ant tasks within the Maven lifecycle.
-                Ant is another build tool (more flexible but less structured than Maven),
-                and this plugin lets you integrate Ant functionality into Maven.
-
-                It's commonly used for custom tasks like printing messages, copying/deleting files,
-                modifying content, generating auxiliary files, etc.
-            -->
             <plugin>
-                <!-- Standard group for official Maven plugins -->
                 <groupId>org.apache.maven.plugins</groupId>
-
-                <!-- Plugin name -->
-                <artifactId>maven-antrun-plugin</artifactId>
-
-                <!-- Plugin version -->
-                <version>1.8</version>
-
-                <!--
-                    <executions> defines one or more specific executions of the plugin.
-                    Each execution can be bound to a different phase and have its own configuration.
-                -->
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
-                        <!-- Unique ID for this execution -->
-                        <id>mensaje-en-compile</id>
-
-                        <!--
-                            Phase of the build lifecycle when this execution runs.
-                            In this case: "compile", which is when Maven compiles the source code.
-                        -->
-                        <phase>compile</phase>
-
-                        <!--
-                            List of goals from the plugin to be executed.
-                            The 'run' goal allows running a series of tasks defined under <tasks>.
-                        -->
+                        <id>enforce-standard-rules</id>
+                        <phase>validate</phase> <!-- 👈 Make sure to bind it to this phase -->
                         <goals>
-                            <goal>run</goal>
+                            <goal>enforce</goal>
                         </goals>
-
-                        <!--
-                            Configuration specific to the 'run' goal.
-                            Here we define Ant tasks, such as printing a message.
-                        -->
                         <configuration>
-                            <target>
-                                <!-- Ant task: prints a message to the console during the 'compile' phase -->
-                                <echo message="🛠️ Hello Jose Manuel! This message runs during the compile phase." />
-                            </target>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.8.1,)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>[17,)</version>
+                                </requireJavaVersion>
+                            </rules>
+                            <failFast>true</failFast>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <!-- Official Maven plugin used to create JAR files during the 'package' phase -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <!--
-                                Adds a 'Class-Path' entry to the MANIFEST.MF file inside the generated JAR.
-
-                                This entry lists the names of external JAR files that your application depends on at runtime.
-                                It tells the JVM where to look for those libraries when executing your JAR — assuming they are located
-                                in the same directory or a specified relative path (e.g., 'lib/').
-
-                                Note: Maven does not copy these dependencies automatically. You must place them manually
-                                or use another plugin like 'maven-dependency-plugin' or 'maven-assembly-plugin'.
-
-                                Example of generated entry:
-                                Class-Path: lib/library1.jar lib/library2.jar
-
-                                ❗ If you do NOT declare <addClasspath>true</addClasspath>,
-                                the 'Class-Path' entry will not be included in the manifest.
-                                As a result, when you run your JAR, the JVM will not know where to find external dependencies,
-                                and you'll get ClassNotFoundException errors unless you manually specify the classpath at runtime.
-                            -->
-                            <addClasspath>true</addClasspath>
-
-                            <!--
-                                Specifies the entry point of the application (i.e., the class with the 'main' method).
-
-                                This will generate a 'Main-Class' entry in the MANIFEST.MF file:
-                                Main-Class: HelloWorld
-
-                                It allows the JAR to be executed directly with:
-                                java -jar your-artifact-name.jar
-
-
-                                ❗ If you do NOT declare <mainClass>, Maven will not include a 'Main-Class' entry in the manifest.
-                                As a result, running the JAR with 'java -jar' will fail with an error like:
-                                "no main manifest attribute, in your-artifact-name.jar"
-
-                                In that case, you would need to run the program using the full classpath and main class manually:
-                                java -cp your-artifact-name.jar HelloWorld
-                            -->
-                            <mainClass>Main</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
             </plugin>
         </plugins>
     </build>
